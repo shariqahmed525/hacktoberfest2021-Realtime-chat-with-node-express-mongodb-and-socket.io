@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Realtime chat with node.js, express, mongodb and socket.io</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <div class="container mt-2">
+      <div class="jumbotron">
+        <h3 class="display-4 text-center">Send Message</h3>
+        <br />
+        <input
+          id="name"
+          class="form-control"
+          type="text"
+          placeholder="Enter your name"
+        />
+        <br />
+        <textarea
+          id="message"
+          class="form-control"
+          type="text"
+          placeholder="Enter your Message"
+        ></textarea>
+        <br />
+        <button id="send" class="btn btn-success">Send</button>
+      </div>
+      <div id="messages"></div>
+    </div>
+
+    <script>
+      var socket = io();
+      $(() => {
+        getMessages();
+        $("#send").click(() => {
+          var name = $("#name").val();
+          var message = $("#message").val();
+          if (name && message) {
+            sendMessage({ name, message });
+            var name = $("#name").val("");
+            var message = $("#message").val("");
+            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+          }
+        });
+      });
+
+      socket.on("msg", addMessage);
+
+      function addMessage(params) {
+        $("#messages").append(
+          `<h4>${params.name}</h4> <p>${params.message}</p>`
+        );
+      }
+
+      function getMessages() {
+        $.get(
+          "https://learning-socketio-with-mongodb.herokuapp.com/messages",
+          data => {
+            data.forEach(addMessage);
+          }
+        );
+      }
+
+      function sendMessage(message) {
+        $.post(
+          "https://learning-socketio-with-mongodb.herokuapp.com/messages",
+          message
+        );
+      }
+    </script>
+  </body>
+</html>
