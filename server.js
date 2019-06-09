@@ -15,7 +15,7 @@ var server = http.listen(port, () => {
 });
 
 var dbUrl =
-  "mongodb://shariqahmed:shariq123@ds135217.mlab.com:35217/learning-socket-io-with-mongodb";
+  "mongodb://<dbusername>:<dbuserpassword>@ds135217.mlab.com:35217/learning-socket-io-with-mongodb";
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
